@@ -1,70 +1,91 @@
-# Getting Started with Create React App
+# Application de gestion de produits et catégories
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
+Ce projet consiste à créer une application fullstack permettant de gérer des produits et des catégories. Le backend est une API RESTful développée avec **Symfony**, et le frontend est construit avec **React.js** et **Tailwind CSS**. L'application permet de réaliser des opérations CRUD (Créer, Lire, Mettre à jour, Supprimer) pour les produits et les catégories.
 
-## Available Scripts
+## Installation
 
-In the project directory, you can run:
+### Prérequis
+Avant de commencer l'installation, assurez-vous d'avoir les outils suivants installés sur votre machine :
+- **PHP 8.0 ou supérieur**
+- **Composer** pour la gestion des dépendances PHP
+- **Node.js** et **npm** pour l'application React
+- **Base de données MySQL** ou **SQLite**
 
-### `npm start`
+### Backend (Symfony)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Clonez le repository :
+   ```bash
+   git clone https://github.com/username/repository.git
+   cd backend
+   ```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. Installez les dépendances Symfony :
+   ```bash
+   composer install
+   ```
 
-### `npm test`
+3. Configurez votre base de données dans le fichier `.env.local` :
+   ```bash
+   DATABASE_URL="mysql://root:root@127.0.0.1:3306/your_database"
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4. Exécutez les migrations pour créer les tables de la base de données :
+   ```bash
+   php bin/console doctrine:migrations:migrate
+   ```
 
-### `npm run build`
+5. Lancez le serveur Symfony :
+   ```bash
+   symfony server:start
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Vous pouvez maintenant accéder à l'API backend à l'adresse [http://localhost:8000](http://localhost:8000).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Frontend (React.js)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Clonez le repository :
+   ```bash
+   git clone https://github.com/username/repository.git
+   cd frontend
+   ```
 
-### `npm run eject`
+2. Installez les dépendances npm :
+   ```bash
+   npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. Lancez l’application React :
+   ```bash
+   npm start
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+L’application frontend sera accessible à [http://localhost:3000](http://localhost:3000).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Choix techniques
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Backend - Symfony
+- **Symfony** : Framework PHP utilisé pour créer une API RESTful.
+- **Doctrine ORM** : Utilisé pour gérer les entités Produit et Categorie et pour interagir avec la base de données.
+- **Validation Symfony** : Assure la validation des données envoyées à l'API (par exemple, la validation des champs requis, des types de données, etc.).
+- **JWT (Bonus)** : Utilisé pour l'authentification sécurisée dans le cadre des fonctionnalités avancées.
 
-## Learn More
+### Frontend - React.js
+- **React.js** : Bibliothèque JavaScript utilisée pour créer une interface utilisateur dynamique.
+- **Redux** : Utilisé pour la gestion de l'état global de l'application.
+- **Tailwind CSS** : Framework CSS pour une mise en page rapide, responsive et personnalisable.
+- **Axios** : Utilisé pour effectuer des appels HTTP à l'API backend.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Fonctionnalités
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Backend
+- **CRUD Produits** : Permet de créer, lire, mettre à jour et supprimer des produits. Chaque produit a des attributs tels que id, nom, description, prix, catégorie, et date de création.
+- **CRUD Catégories** : Permet de créer, lire, mettre à jour et supprimer des catégories. Chaque catégorie a un attribut id et nom.
+- **Gestion des relations** : La relation entre les produits et les catégories est gérée à l'aide de Doctrine.
+- **Validation des données** : La validation est implémentée pour assurer l'intégrité des données envoyées via l'API.
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Frontend
+- **Affichage des produits et des catégories** : La liste des produits et des catégories est récupérée via l'API et affichée dans un tableau dynamique.
+- **Gestion des opérations CRUD** : Les utilisateurs peuvent ajouter, modifier ou supprimer des produits et des catégories directement depuis l'interface.
+- **Gestion de l'état global avec Redux** : L'état de l'application est géré de manière centralisée avec Redux, ce qui permet de partager les données entre les composants.
+- **Interface responsive** : L'interface utilisateur est adaptée à tous les types d'appareils grâce à Tailwind CSS.
