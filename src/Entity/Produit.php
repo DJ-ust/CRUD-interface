@@ -23,7 +23,7 @@ class Produit
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?float $prix = null;
+    private ?string $prix = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
@@ -63,12 +63,12 @@ class Produit
         return $this->prix;
     }
 
-    public function setPrix(string $prix): static
-    {
-        $this->prix = $prix;
+   public function setPrix(string|float $prix): self
+{
+    $this->prix = (string) $prix;
 
-        return $this;
-    }
+    return $this;
+}
 
     public function getCategorie(): ?Categorie
     {
@@ -81,4 +81,6 @@ class Produit
 
         return $this;
     }
+
+    
 }
