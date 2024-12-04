@@ -27,7 +27,7 @@ class Produit
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Categorie $catégorie = null;
+    private ?Categorie $categorie = null;
 
     public function getId(): ?int
     {
@@ -70,14 +70,14 @@ class Produit
         return $this;
     }
 
-    public function getCatégorie(): ?Categorie
+    public function getCategorie(): ?Categorie
     {
-        return $this->catégorie;
+        return $this->categorie;
     }
 
-    public function setCatégorie(?Categorie $catégorie): static
+    public function setCategorie(?Categorie $categorie): static
     {
-        $this->catégorie = $catégorie;
+        $this->categorie = $categorie;
 
         return $this;
     }

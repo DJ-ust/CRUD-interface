@@ -1,10 +1,11 @@
-// src/Controller/ProduitController.php
+<?php
 
 namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Repository\ProduitRepository;
 use App\Repository\CategorieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,9 +19,7 @@ class ProduitController extends AbstractController
      */
     public function getProduits(ProduitRepository $produitRepository): Response
     {
-        // On récupère tous les produits de la base de données
         $produits = $produitRepository->findAll();
-        // On retourne les produits sous forme de JSON
         return $this->json($produits);
     }
 
@@ -28,27 +27,24 @@ class ProduitController extends AbstractController
     /**
      * @Route("/api/produits", methods={"POST"})
      */
-    public function createProduit(Request $request, CategorieRepository $categorieRepository): Response
-    {
-        // On récupère les données envoyées par l'utilisateur (en JSON)
+    public function createProduit(
+        Request $request, 
+        CategorieRepository $categorieRepository, 
+        EntityManagerInterface $entityManager
+    ): Response {
         $data = json_decode($request->getContent(), true);
 
-        // On crée un nouvel objet Produit
         $produit = new Produit();
         $produit->setNom($data['nom']);
         $produit->setDescription($data['description']);
         $produit->setPrix($data['prix']);
-        
-        // On récupère la catégorie à partir de l'ID de catégorie envoyé dans la requête
+
         $categorie = $categorieRepository->find($data['categorie_id']);
         $produit->setCategorie($categorie);
 
-        // On persiste le produit dans la base de données
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($produit);
         $entityManager->flush();
 
-        // On renvoie le produit créé
         return $this->json($produit, Response::HTTP_CREATED);
     }
 
@@ -56,19 +52,18 @@ class ProduitController extends AbstractController
     /**
      * @Route("/api/produits/{id}", methods={"PUT"})
      */
-    public function updateProduit(Request $request, Produit $produit): Response
-    {
-        // On récupère les données envoyées par l'utilisateur
+    public function updateProduit(
+        Request $request, 
+        Produit $produit, 
+        EntityManagerInterface $entityManager
+    ): Response {
         $data = json_decode($request->getContent(), true);
         $produit->setNom($data['nom']);
         $produit->setDescription($data['description']);
         $produit->setPrix($data['prix']);
 
-        // On met à jour le produit dans la base de données
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->flush();
 
-        // On renvoie le produit mis à jour
         return $this->json($produit);
     }
 
@@ -76,14 +71,11 @@ class ProduitController extends AbstractController
     /**
      * @Route("/api/produits/{id}", methods={"DELETE"})
      */
-    public function deleteProduit(Produit $produit): Response
+    public function deleteProduit(Produit $produit, EntityManagerInterface $entityManager): Response
     {
-        // On supprime le produit de la base de données
-        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($produit);
         $entityManager->flush();
 
-        // On renvoie une réponse indiquant que le produit a été supprimé
         return $this->json(['status' => 'Produit supprimé']);
     }
 }
