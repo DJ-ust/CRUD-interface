@@ -4,78 +4,54 @@ namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Repository\ProduitRepository;
-use App\Repository\CategorieRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
+#[Route('/api/produits')]
 class ProduitController extends AbstractController
 {
-    // Route GET pour récupérer tous les produits
-    /**
-     * @Route("/api/produits", methods={"GET"})
-     */
-    public function getProduits(ProduitRepository $produitRepository): Response
+    #[Route('', methods: ['GET'])]
+    public function getProduits(ProduitRepository $produitRepository, SerializerInterface $serializer): Response
     {
         $produits = $produitRepository->findAll();
-        return $this->json($produits);
+        $data = $serializer->serialize($produits, 'json', ['groups' => 'produit:read']);
+        return new Response($data, 200, ['Content-Type' => 'application/ld+json']);
     }
 
-    // Route POST pour créer un produit
-    /**
-     * @Route("/api/produits", methods={"POST"})
-     */
-    public function createProduit(
-        Request $request, 
-        CategorieRepository $categorieRepository, 
-        EntityManagerInterface $entityManager
-    ): Response {
-        $data = json_decode($request->getContent(), true);
-
-        $produit = new Produit();
-        $produit->setNom($data['nom']);
-        $produit->setDescription($data['description']);
-        $produit->setPrix($data['prix']);
-
-        $categorie = $categorieRepository->find($data['categorie_id']);
-        $produit->setCategorie($categorie);
-
-        $entityManager->persist($produit);
-        $entityManager->flush();
-
-        return $this->json($produit, Response::HTTP_CREATED);
-    }
-
-    // Route PUT pour mettre à jour un produit existant
-    /**
-     * @Route("/api/produits/{id}", methods={"PUT"})
-     */
-    public function updateProduit(
-        Request $request, 
-        Produit $produit, 
-        EntityManagerInterface $entityManager
-    ): Response {
-        $data = json_decode($request->getContent(), true);
-        $produit->setNom($data['nom']);
-        $produit->setDescription($data['description']);
-        $produit->setPrix($data['prix']);
-
-        $entityManager->flush();
-
-        return $this->json($produit);
-    }
-
-    // Route DELETE pour supprimer un produit
-    /**
-     * @Route("/api/produits/{id}", methods={"DELETE"})
-     */
-    public function deleteProduit(Produit $produit, EntityManagerInterface $entityManager): Response
+    #[Route('', methods: ['POST'])]
+    public function createProduit(Request $request, EntityManagerInterface $em, SerializerInterface $serializer): Response
     {
-        $entityManager->remove($produit);
-        $entityManager->flush();
+        $produit = $serializer->deserialize($request->getContent(), Produit::class, 'json');
+        $em->persist($produit);
+        $em->flush();
+        return new Response('', 201);
+    }
 
-        return $this->json(['status' => 'Produit supprimé']);
+    #[Route('/{id}', methods: ['PUT'])]
+    public function updateProduit(int $id, Request $request, ProduitRepository $produitRepository, EntityManagerInterface $em, SerializerInterface $serializer): Response
+    {
+        $produit = $produitRepository->find($id);
+        if (!$produit) {
+            return new Response('Produit non trouvé', 404);
+        }
+        $serializer->deserialize($request->getContent(), Produit::class, 'json', ['object_to_populate' => $produit]);
+        $em->flush();
+        return new Response('', 200);
+    }
+
+    #[Route('/{id}', methods: ['DELETE'])]
+    public function deleteProduit(int $id, ProduitRepository $produitRepository, EntityManagerInterface $em): Response
+    {
+        $produit = $produitRepository->find($id);
+        if (!$produit) {
+            return new Response('Produit non trouvé', 404);
+        }
+        $em->remove($produit);
+        $em->flush();
+        return new Response('', 204);
     }
 }
